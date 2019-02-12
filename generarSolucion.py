@@ -12,19 +12,28 @@ def empezarResolucion(N):
 
     buscarSolucion(N, tablero, 0)
 
-    #for i in range(0, N):
-     #   solucion += [(i, tablero[i].index(1))]
+    for i in range(0, N):
+        solucion += [(i, tablero[i].index(1))]
 
-    return tablero
+    return solucion
 
 def buscarSolucion(N, tablero, filaActual):
     columnaActual = 0
     encontrada = False
 
-    while (encontrada == False and columnaActual < N-1):
+    while (encontrada == False and columnaActual < N):
         if posValida(tablero, (filaActual, columnaActual)):
             tablero[filaActual][columnaActual] = 1
-           
+
+            if filaActual == N-1:
+                encontrada = True
+            elif (buscarSolucion(N, tablero, filaActual+1)):
+                    encontrada = True
+            else:
+                tablero[filaActual][columnaActual] = 0
+            
+
+        columnaActual += 1   
 
     return encontrada
 
@@ -48,16 +57,28 @@ def posValida(tablero, pos):
 
     return valida
 
+def salidaAArchivo(N, solucion):
+    with open("solucion.txt", "w") as archivo:
+        archivo.write(str(N) + "\n")
+        
+        for i in range(0, N):
+            x = solucion[i][0]
+            y = solucion[i][1]
+            posStr = str(x) + " " + str(y) + "\n"
+            archivo.write(posStr)
+
 def main():
     N = int(input("Ingrese N: "))
 
     if (N >= 4 and N < 16):
         solucion = empezarResolucion(N)
         if (len(solucion) != 0):
-            print(solucion)
+            print("Se encontró una solución, se encuentra en el archivo de salida solucion.txt")
+            salidaAArchivo(N, solucion)
         else:
             print("No se pudo encontrar una solución.")
     else:
         print("N inválido, finalizando programa.")
         return -1
+        
 main()
