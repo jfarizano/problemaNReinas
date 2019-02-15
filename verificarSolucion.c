@@ -3,51 +3,57 @@
         Problema de las N Reinas - Programa en C (Verificación de la solución)
 		Farizano, Juan Ignacio
         
+        Representamos la posición de una reina en un tablero de ajedrez mediante dos enteros, x e y.
+        El tamaño del tablero y la cantidad de reinas colocadas se representa mediante un entero
+        N, es decir: el tablero es de tamaño NxN reinas, y en él se encuentran N reinas.
 */
 
 #include <stdio.h>
 
 int leerYVerificarPosiciones(FILE *archivo, int N){
+    /*
+        leerYVerificarPosiciones(): file int -> int
+    */
 
-    int solucionCorrecta = 1, cantidadReinasLeidas = 0;
+    int solucionCorrecta = 1, cantidadReinasColocadas = 0;
     int xPosicionesReinas[N], yPosicionesReinas[N]; // Arrays para almacenar las posiciones de las reinas
     int buff[2]; // Buffer para almacenar temporalmente las posiciones de las reinas
 
-    while (fscanf(archivo, "%d %d", &buff[0], &buff[1]) != EOF && cantidadReinasLeidas <= N){
+    while (fscanf(archivo, "%d %d", &buff[0], &buff[1]) != EOF && cantidadReinasColocadas < N){
         
-        int x0 = buff[0], y0 = buff[1];
+        int x = buff[0], y = buff[1];
         
-        if(x0 >= 0 && x0 < N  && y0 >= 0 && y0 < N){ //Verificar que la reina esté dentro del tablero
+        if(x >= 0 && x < N  && y >= 0 && y < N){ //Verifica que la reina esté dentro del tablero
             
-            xPosicionesReinas[cantidadReinasLeidas] = x0;
-            yPosicionesReinas[cantidadReinasLeidas] = y0;
+            xPosicionesReinas[cantidadReinasColocadas] = x;
+            yPosicionesReinas[cantidadReinasColocadas] = y;
             
-            for(int i = 0; i < cantidadReinasLeidas; i++){
+            for(int i = 0; i < cantidadReinasColocadas; i++){
                 
-                int x1 = xPosicionesReinas[i], y1 = yPosicionesReinas[i];
+                int x0 = xPosicionesReinas[i], y0 = yPosicionesReinas[i];
 
-                if(x0 == x1){
-                    printf("Solución incorrecta: La reina en la posición (%d, %d) colisiona de forma horizontal con la reina en la posición (%d, %d).\n", x0, y0, x1, y1);                 
+                if(x == x0){
+                    printf("Las reinas en las posiciones (%d, %d) y (%d, %d) se atacan de forma horizontal.\n", x0, y0, x, y);                 
                     solucionCorrecta = 0;
-                }else if(y0 == y1){
-                    printf("Solución incorrecta: La reina en la posición (%d, %d) colisiona de forma vertical con la reina en la posición (%d, %d).\n", x0, y0, x1, y1);
+                }else if(y == y0){
+                    printf("Las reinas en las posiciones (%d, %d) y (%d, %d) se atacan de forma vertical.\n", x0, y0, x, y);
                     solucionCorrecta = 0;
-                }else if(x1 - x0 == y1 - y0 || x1 - x0 == y0 -y1){ // Es lo mismo que |x1-x0| == |y1-y0|
-                    printf("Solución incorrecta: La reina en la posición (%d, %d) colisiona de forma diagonal con la reina en la posición (%d, %d).\n", x0, y0, x1, y1);
+                }else if(x - x0 == y - y0 || x0 - x == y -y0){ // Es lo mismo que |x-x0| == |y-y0|
+                    printf("Las reinas en las posiciones (%d, %d) y (%d, %d) se atacan de forma diagonal.\n", x0, y0, x, y);
                     solucionCorrecta = 0;
                 }
             }
 
-        cantidadReinasLeidas++;
+        cantidadReinasColocadas++;
 
         }else{
-            printf("ERROR: La posición (%d,%d) no es válida en un tablero de tamaño %d, finalizando programa.\n", x0, y0, N);
+            printf("ERROR: La posición (%d,%d) no es válida en un tablero de tamaño %dx%d, finalizando programa.\n", x, y, N, N);
             return 0;
         }
     
     }
 
-    if (cantidadReinasLeidas != N){
+    if (cantidadReinasColocadas != N){
         printf("Advertencia: La cantidad de reinas en el tablero no coincide con la cantidad indicada.\n");
     }
 
@@ -56,6 +62,14 @@ int leerYVerificarPosiciones(FILE *archivo, int N){
 
 
 int main (){
+    /*
+        main(): none -> int
+        Función principal del programa, abre el archivo solucion.txt, lee la primera línea donde
+        se encuentra N, verifica que esté en el rango permitido [4,15], se verifican las posiciones
+        de las reinas e imprime un mensaje a consola y devuelve 0 si la solución es correcta.
+        En caso de que el archivo no exista, N sea inválido o la solución sea incorrecta, se indica
+        con un mensaje en pantalla y devuelve -1.
+    */
 
     FILE *archivo;
     int buff[2];
@@ -72,10 +86,11 @@ int main (){
         if (N >= 4 && N < 16){
 
             if (leerYVerificarPosiciones(archivo, N)){
-                printf("Solución válida.\n");
+                printf("Solución correcta.\n");
                 fclose(archivo);
                 return 0;
             }else{
+                printf("Solución incorrecta.\n");
                 fclose(archivo);
                 return -1;
             }
