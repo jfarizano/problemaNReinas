@@ -13,6 +13,12 @@
 int leerYVerificarPosiciones(FILE *archivo, int N){
     /*
         leerYVerificarPosiciones(): file int -> int
+        Dado un archivo y N, lee las N líneas del archivo siguientes a la primera, las cuales contienen las posiciones de
+        las reinas. A medida que se van leyendo las líneas, se verifica que la posición de la línea actual esté dentro
+        del tablero, si es así, se verifica que no se "ataque" con las reinas en las posiciones ya verificadas, si
+        estas condiciones se cumplen, la posición se almacena en los arrays xPosicionesReinas e yPosicionesReinas.
+        Si la solución es correcta, la función devuelve 1 (True), en caso de que una posición esté fuera del tablero,
+        o una reina se "ataca" con otra, devuelve 0 (False).
     */
 
     int solucionCorrecta = 1, cantidadReinasColocadas = 0;
