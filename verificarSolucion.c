@@ -6,6 +6,7 @@
         Representamos la posición de una reina en un tablero de ajedrez mediante dos enteros, x e y.
         El tamaño del tablero y la cantidad de reinas colocadas se representa mediante un entero
         N, es decir: el tablero es de tamaño NxN reinas, y en él se encuentran N reinas.
+        El tamaño de N debe ser mayor o igual que 4 y menor o igual que 15.
 */
 
 #include <stdio.h>
@@ -71,25 +72,24 @@ int main (){
     /*
         main(): none -> int
         Función principal del programa, abre el archivo solucion.txt, lee la primera línea donde
-        se encuentra N, verifica que esté en el rango permitido [4,15], se verifican las posiciones
+        se encuentra N, verifica que tenga un tamaño válido, se verifican las posiciones
         de las reinas e imprime un mensaje a consola y devuelve 0 si la solución es correcta.
         En caso de que el archivo no exista, N sea inválido o la solución sea incorrecta, se indica
         con un mensaje en pantalla y devuelve -1.
     */
 
     FILE *archivo;
-    int buff[2];
 
     // Apertura del archivo de entrada
     archivo = fopen("solucion.txt", "r");
 
     if (archivo != NULL){
         
-        // Lectura de la primera línea con el tamaño del tablero/cantidad de reinas
+        // Lectura de la primera línea que contiene a N
         int N;
         fscanf(archivo, "%d", &N);
 
-        if (N >= 4 && N < 16){
+        if (N >= 4 && N <= 15){
 
             if (leerYVerificarPosiciones(archivo, N)){
                 printf("Solución correcta.\n");

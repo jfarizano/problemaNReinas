@@ -5,18 +5,17 @@
 
         Representamos un tablero de ajedrez mediante una lista bi-dimensional de enteros,
         donde cada posición está representada por una tupla de enteros (x,y) y está ocupada
-        por un 0 si la misma se encuentra libre o por un 1 si en la misma se encuentra colocada
-        una reina.
+        por un 0 si la misma se encuentra libre o por un 1 si en la misma se encuentra una reina.
         El tamaño del tablero y la cantidad de reinas a ubicar se representa mediante un entero
         N, es decir: el tablero es de tamaño NxN reinas, y en él se colocarán N reinas.
-        
+        El tamaño de N debe ser mayor o igual que 4 y menor o igual que 15.
 """
 
 def crearTablero(N):
     """
     crearTablero(): int -> list[list[int]]
     Dado N, devuelve una lista bidimensional o matriz de tamaño NxN cuyos elementos
-    son el entero 0.
+    son el entero 0 (tablero de ajedrez con ninguna pieza colocada).
     """
     
     tablero = []
@@ -37,14 +36,21 @@ def empezarResolucion(N):
     tablero = crearTablero(N)
     solucion = []
 
-    buscarSolucion(N, tablero, 0)
+    if (buscarSolucion(N, tablero, 0)):
 
-    for i in range(0, N):
-        solucion += [(i, tablero[i].index(1))]
+        for i in range(0, N):
+            solucion += [(i, tablero[i].index(1))]
 
     return solucion
 
 def buscarSolucion(N, tablero, filaActual):
+    """
+    buscarSolucion(): int list[list[int]] int -> boolean
+    Dado N, el tablero y un entero que representa la fila actual, resuelve el problema
+    de las N reinas recursivamente.
+    Una vez encontrada la solución, finaliza la recursión y devuelve True.
+    En el rango de N permitido, no es posible que el problema no tenga solución.
+    """
 
     columnaActual = 0
     encontrada = False
@@ -59,7 +65,7 @@ def buscarSolucion(N, tablero, filaActual):
                     encontrada = True
             else:
                 tablero[filaActual][columnaActual] = 0
-            
+
 
         columnaActual += 1   
 
@@ -73,37 +79,29 @@ def posValida(tablero, pos):
     es válida devuelve True, en caso contrario devuelve False.
     """
     
-    x0 = pos[0]
-    y0 = pos[1]
+    x = pos[0]
+    y = pos[1]
     valida = True
     reinasColocadas = []
 
-    for i in range(0, x0):
+    for i in range(0, x):
         reinasColocadas += [(i, tablero[i].index(1))]
     
     for reina in reinasColocadas:
-        x1 = reina[0]
-        y1 = reina[1]
+        x0 = reina[0]
+        y0 = reina[1]
 
-        if ( (x0 == x1) or (y0 == y1) or (abs(x1-x0) == abs(y1-y0)) ):
+        if ( (x == x0) or (y == y0) or (abs(x-x0) == abs(y-y0)) ):
             valida = False
 
     return valida
 
 def salidaAArchivo(N, solucion):
     """
+    salidaAArchivo(): int list[(int,int)] -> none
     Dado N y la lista con la solución, realiza la salida al archivo solucion.txt siguiendo
     el formato legible para verificar la solucion mediante el programa escrito en C. El texto
-    sigue el siguiente formato:
-    N
-    x0 y0
-    x1 y1
-    .
-    .
-    .
-    xN yN
-    Donde en la primera línea se encuentra N, y en las siguientes N líneas se encuentran
-    las posiciones de las reinas con x e y separados por un espacio.
+    sigue el formato explicado en el README.
     """
     
     with open("solucion.txt", "w") as archivo:
@@ -119,7 +117,7 @@ def main():
     """
     main(): none -> int
     Función principal del programa, recibe N mediante un input en consola, verifica que
-    se encuentre en el rango permitido [4, 15] y empieza la resolucion.
+    el tamaño de N sea válido y empieza la resolucion.
     En caso de que la resolucion sea exitosa se realiza la salida al archivo solucion.txt
     y devuelve 0, en caso de que N sea inválido, se imprime
     un mensaje a consola y devuelve -1.
@@ -141,5 +139,42 @@ def main():
     else:
         print("N inválido, finalizando programa.")
         return -1
-        
-main()
+
+"""
+==========================================================
+              LLAMADA PARA INICIAR EL PROGRAMA
+==========================================================
+"""
+#main()
+
+"""
+==========================================================
+                        TESTING
+==========================================================
+"""
+
+def test_crearTablero():
+    assert crearTablero(0) == []
+    assert crearTablero(1) == [[0]]
+    assert crearTablero(3) == [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+
+def test_empezarResolucion():
+    assert empezarResolucion(3) == []
+    assert empezarResolucion(4) == [(0, 1), (1, 3), (2, 0), (3, 2)]
+
+def test_buscarSolucion():
+    tableroTest = crearTablero(4)
+    assert buscarSolucion(4, tableroTest, 0) == True
+
+    tableroTest2 = [[1, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 1, 0], [0, 1, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0]]
+    assert buscarSolucion(6, tableroTest2, 5) == False
+
+
+def test_posValida():
+    tableroTest = crearTablero(4)
+    tableroTest[0][0] = 1
+
+    assert posValida([[0]], (0,0)) == True
+    assert posValida(tableroTest, (1,0)) == False
+    assert posValida(tableroTest, (1,1)) == False
+    assert posValida(tableroTest, (1,3)) == True
